@@ -126,22 +126,23 @@ pipeline {
 
     // --- Post Build Actions ---
     // Các hành động được thực thi sau khi tất cả các stage hoàn thành
-    post {
-        // Luôn luôn thực thi, dù pipeline thành công hay thất bại
-        always {
-            echo 'Pipeline finished.'
-            // Dọn dẹp workspace của Jenkins để tiết kiệm dung lượng
-            cleanWs()
+        post { // Các hành động sau khi pipeline kết thúc
+            always {
+                echo 'Pipeline finished.'
+                // **THAY ĐỔI Ở ĐÂY:** Bọc cleanWs() trong khối node {}
+                node {
+                    // Dọn dẹp workspace sau khi build
+                    echo 'Cleaning workspace...' // Thêm log để dễ theo dõi
+                    cleanWs()
+                }
+            }
+            success {
+                echo 'Pipeline succeeded!'
+                // Gửi thông báo thành công (ví dụ: Slack, Email - cần cấu hình plugin)
+            }
+            failure {
+                echo 'Pipeline failed!'
+                // Gửi thông báo lỗi
+            }
         }
-        // Chỉ thực thi nếu pipeline thành công
-        success {
-            echo 'Pipeline succeeded!'
-            // Có thể thêm bước gửi thông báo thành công (Slack, Email...)
-        }
-        // Chỉ thực thi nếu pipeline thất bại
-        failure {
-            echo 'Pipeline failed!'
-            // Có thể thêm bước gửi thông báo lỗi
-        }
-    }
 }
