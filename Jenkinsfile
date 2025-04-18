@@ -4,23 +4,13 @@ pipeline {
     // Chỉ định rằng các stage (trừ những stage có agent riêng) sẽ chạy
     // bên trong một container Docker được tạo tự động.
     agent {
-        docker {
-            // Sử dụng image Docker chính thức, tag 'latest' (luôn lấy bản mới nhất)
-            // Image này có chứa sẵn Docker client CLI.
-            image 'docker:latest'
-            // Tùy chọn: Cho phép Jenkins tái sử dụng node agent nếu có thể,
-            // thay vì luôn tạo container mới. Có thể tăng tốc độ build.
-            reuseNode true
-            // **Rất quan trọng:** Mount Docker socket từ máy host Jenkins vào
-            // container agent này. Điều này cho phép Docker client bên trong agent
-            // giao tiếp và điều khiển Docker daemon trên máy host.
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-            // Lưu ý: Nếu chạy Jenkins trên Linux và gặp lỗi quyền truy cập socket,
-            // bạn có thể cần cấp quyền cho user chạy container agent (thường là 'jenkins')
-            // để truy cập file socket trên host, hoặc chạy agent với user root:
-            // args '-v /var/run/docker.sock:/var/run/docker.sock -u root'
+            docker {
+                image 'docker:latest'
+                reuseNode true
+                // Thêm -u root vào args
+                args '-v /var/run/docker.sock:/var/run/docker.sock -u root'
+            }
         }
-    }
 
     // --- Environment Variables ---
     // Định nghĩa các biến môi trường sẽ có sẵn trong suốt pipeline
